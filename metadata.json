@@ -1,0 +1,6 @@
+{
+  "name": "Menú Navideño 2026 — Pedidos por WhatsApp",
+  "description": "Menú digital navideño para elegir tus platos favoritos y enviar tu pedido a domicilio directamente por WhatsApp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
