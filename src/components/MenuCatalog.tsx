@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, Search, UtensilsCrossed } from 'lucide-react';
-import { MENU_CATEGORIES, MENU_ITEMS, formatCOP } from '../data/menuData';
+import { MENU_CATEGORIES, MENU_ITEMS } from '../data/menuData';
 import { MenuCategoryId, MenuItem } from '../types/menu';
 
 interface MenuCatalogProps {
@@ -110,7 +110,7 @@ export function MenuCatalog({ onSelectDish }: MenuCatalogProps) {
                   <button
                     type="button"
                     onClick={() => onSelectDish(item)}
-                    className="block w-full aspect-[4/3] bg-[#EFEAE2] overflow-hidden text-left cursor-pointer focus-visible:outline-2 focus-visible:outline-[#A81C24]"
+                    className="relative block w-full aspect-[4/3] bg-[#EFEAE2] overflow-hidden text-left cursor-pointer focus-visible:outline-2 focus-visible:outline-[#A81C24]"
                   >
                     {imgFailed ? (
                       <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#F3ECE1] to-[#E5DBCD] text-[#574E49] p-6 text-center">
@@ -119,6 +119,25 @@ export function MenuCatalog({ onSelectDish }: MenuCatalogProps) {
                           {item.name}
                         </span>
                       </div>
+                    ) : item.imageFit === 'contain' ? (
+                      <>
+                        <img
+                          src={item.image}
+                          alt=""
+                          aria-hidden="true"
+                          referrerPolicy="no-referrer"
+                          className="absolute inset-0 w-full h-full object-cover scale-110 blur-md opacity-95"
+                        />
+                        <img
+                          src={item.image}
+                          alt={item.imageAlt}
+                          referrerPolicy="no-referrer"
+                          onError={() =>
+                            setFailedImages((prev) => ({ ...prev, [item.id]: true }))
+                          }
+                          className="relative z-10 w-full h-full object-contain [mask-image:linear-gradient(to_bottom,transparent_0%,black_8%,black_92%,transparent_100%)] transition-transform duration-300 group-hover:scale-[1.03]"
+                        />
+                      </>
                     ) : (
                       <img
                         src={item.image}
@@ -150,20 +169,11 @@ export function MenuCatalog({ onSelectDish }: MenuCatalogProps) {
                       )}
                     </div>
 
-                    <div className="mt-5 pt-4 border-t border-[#1E1916]/10 flex items-center justify-between gap-4">
-                      <div>
-                        <span className="block text-[11px] uppercase tracking-wider text-[#746A63]">
-                          Desde
-                        </span>
-                        <span className="font-mono text-lg font-semibold text-[#1E1916] tabular-nums">
-                          {formatCOP(item.basePrice)}
-                        </span>
-                      </div>
-
+                    <div className="mt-5 pt-4 border-t border-[#1E1916]/10">
                       <button
                         type="button"
                         onClick={() => onSelectDish(item)}
-                        className="inline-flex items-center gap-1.5 px-4 py-2.5 min-h-[42px] rounded-lg bg-[#A81C24] text-white text-sm font-medium hover:bg-[#8E151C] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                        className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 min-h-[42px] rounded-lg bg-[#A81C24] text-white text-sm font-medium hover:bg-[#8E151C] transition-colors cursor-pointer whitespace-nowrap"
                       >
                         <Plus className="w-4 h-4" aria-hidden="true" />
                         <span>Elegir y Pedir</span>

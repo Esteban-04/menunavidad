@@ -10,7 +10,6 @@ export type MenuCategoryId =
 export interface OptionChoice {
   id: string;
   label: string;
-  priceDelta?: number;
 }
 
 export interface OptionGroup {
@@ -28,9 +27,9 @@ export interface MenuItem {
   name: string;
   subtitle: string;
   description: string;
-  basePrice: number;
   image: string;
   imageAlt: string;
+  imageFit?: 'cover' | 'contain';
   highlightNote?: string;
   optionGroups: OptionGroup[];
 }
@@ -40,7 +39,6 @@ export interface SelectedOption {
   groupTitle: string;
   choiceId: string;
   choiceLabel: string;
-  priceDelta: number;
 }
 
 export interface CartItem {
@@ -48,7 +46,6 @@ export interface CartItem {
   menuItemId: string;
   name: string;
   image: string;
-  unitBasePrice: number;
   selectedOptions: SelectedOption[];
   quantity: number;
   notes: string;

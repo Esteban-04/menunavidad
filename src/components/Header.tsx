@@ -1,13 +1,11 @@
 import { ShoppingBag } from 'lucide-react';
-import { formatCOP } from '../data/menuData';
 
 interface HeaderProps {
   cartCount: number;
-  cartSubtotal: number;
   onOpenOrderDrawer: () => void;
 }
 
-export function Header({ cartCount, cartSubtotal, onOpenOrderDrawer }: HeaderProps) {
+export function Header({ cartCount, onOpenOrderDrawer }: HeaderProps) {
   return (
     <header className="sticky top-0 z-30 bg-[#FAF8F5]/95 backdrop-blur-sm border-b border-[#1E1916]/10">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-8">
@@ -56,11 +54,6 @@ export function Header({ cartCount, cartSubtotal, onOpenOrderDrawer }: HeaderPro
             <span className="font-mono text-xs tabular-nums opacity-90">
               ({cartCount})
             </span>
-            {cartSubtotal > 0 && (
-              <span className="hidden sm:inline font-mono text-xs tabular-nums border-l border-white/25 pl-2">
-                {formatCOP(cartSubtotal)}
-              </span>
-            )}
           </button>
         </div>
       </div>

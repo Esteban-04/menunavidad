@@ -32,7 +32,6 @@ export const MENU_ITEMS: MenuItem[] = [
     subtitle: 'Porción tradicional navideña',
     description:
       'Deliciosa porción de natilla artesanal recién preparada acompañada de buñuelos dorados y crujientes.',
-    basePrice: 14000,
     image: '/images/menu/natilla_bunuelos.jpg',
     imageAlt:
       'Porción de natilla artesanal con salsa de mora y buñuelos dorados sobre plato artesanal',
@@ -58,7 +57,6 @@ export const MENU_ITEMS: MenuItem[] = [
           {
             id: 'dulce-mora',
             label: 'Adicionar Dulce de Mora artesanal',
-            priceDelta: 2500,
           },
         ],
       },
@@ -72,10 +70,10 @@ export const MENU_ITEMS: MenuItem[] = [
     subtitle: 'Cinco sabores de temporada',
     description:
       'Postre cremoso sobre base crocante de galleta, preparado en porción individual para celebrar la Navidad.',
-    basePrice: 15000,
-    image: '/images/menu/dulce_navidad.jpg',
+    image: '/assets/aistudio/WhatsApp_Image_2026-11-18_at_10.03.53_PM__2__c4c3ec6e.jpeg',
     imageAlt:
-      'Selección de postres navideños con cheesecake de Oreo, maracuyá, arroz con leche y quesillo',
+      'Cinco vasos de cheesecake artesanal de Oreo, maracuyá, frutos rojos, limón y Milo sobre bandeja de cerámica',
+    imageFit: 'contain',
     highlightNote: 'Limón, Maracuyá, Oreo, Frutos Rojos o Milo',
     optionGroups: [
       {
@@ -101,10 +99,9 @@ export const MENU_ITEMS: MenuItem[] = [
     subtitle: 'Con dulce de mora, arequipe y queso',
     description:
       'Cremoso arroz con leche con toque de canela, servido con dulce de mora, arequipe y queso rallado.',
-    basePrice: 13000,
-    image: '/images/menu/dulce_navidad.jpg',
+    image: '/assets/aistudio/WhatsApp_Image_2026-11-18_at_10.03.53_PM__1__a85e823d.jpeg',
     imageAlt:
-      'Vaso de arroz con leche artesanal con canela acompañado de postres navideños',
+      'Bowl de arroz con leche cremoso espolvoreado con canela y astillas de canela sobre plato blanco',
     highlightNote: 'Incluye los tres acompañamientos clásicos',
     optionGroups: [
       {
@@ -128,9 +125,8 @@ export const MENU_ITEMS: MenuItem[] = [
     subtitle: 'Receta tradicional caramelizada',
     description:
       'Suave y sedoso quesillo artesanal bañado en caramelo dorado, ideal para disfrutar en casa o regalar.',
-    basePrice: 13500,
-    image: '/images/menu/dulce_navidad.jpg',
-    imageAlt: 'Porción de quesillo venezolano bañado en caramelo artesanal',
+    image: '/assets/aistudio/WhatsApp_Image_2026-11-18_at_10.03.53_PM_7a1295ec.jpeg',
+    imageAlt: 'Porción de quesillo venezolano bañado en caramelo dorado sobre plato blanco',
     highlightNote: 'Preparación artesanal diaria',
     optionGroups: [
       {
@@ -153,7 +149,6 @@ export const MENU_ITEMS: MenuItem[] = [
     subtitle: 'Clásico colombiano para compartir',
     description:
       'Empanada dorada y crujiente acompañada de ají casero, limón fresco y un vaso frío de gaseosa o jugo de naranja.',
-    basePrice: 11000,
     image: '/images/menu/empanada_combo.jpg',
     imageAlt: 'Empanada colombiana dorada con ají, limón y vaso frío de gaseosa',
     highlightNote: 'Carne, Pollo o Mixta + Bebida fría',
@@ -189,7 +184,6 @@ export const MENU_ITEMS: MenuItem[] = [
     subtitle: 'El sabor de nuestras tradiciones',
     description:
       'Auténtico tamal tolimense envuelto en hoja de plátano, acompañado a tu elección con arepa o pan hojaldrado y bebida.',
-    basePrice: 24000,
     image: '/images/menu/tamal_tolimense.jpg',
     imageAlt:
       'Tamal tolimense en hoja de plátano servido con pan hojaldrado y taza de chocolate caliente',
@@ -226,7 +220,6 @@ export const MENU_ITEMS: MenuItem[] = [
     subtitle: 'Ideal para cerrar el año',
     description:
       'Generosa porción de 250 gr de lechona tolimense tradicional con cuero crocante, acompañada de arepa y vaso de bebida.',
-    basePrice: 26000,
     image: '/images/menu/lechona_tolimense.jpg',
     imageAlt:
       'Porción de 250 gr de lechona tolimense con arepas y vaso de bebida fría',
@@ -252,7 +245,6 @@ export const MENU_ITEMS: MenuItem[] = [
     subtitle: 'Recordatorio original de temporada',
     description:
       'Esfera de chocolate de alta calidad rellena de masmelos y cocoa que se derrite al contacto con una taza de leche caliente.',
-    basePrice: 12000,
     image: '/images/menu/chocobomba.jpg',
     imageAlt:
       'Chocobomba navideña artesanal decorada con chispas festivas sobre base de madera',
@@ -267,31 +259,16 @@ export const MENU_ITEMS: MenuItem[] = [
           {
             id: 'caja-individual',
             label: 'Caja individual protectora',
-            priceDelta: 0,
           },
           {
             id: 'recordatorio',
             label: 'Empaque festivo de recordatorio con tarjeta',
-            priceDelta: 1500,
           },
         ],
       },
     ],
   },
 ];
-
-export function formatCOP(value: number): string {
-  return new Intl.NumberFormat('es-CO', {
-    style: 'currency',
-    currency: 'COP',
-    maximumFractionDigits: 0,
-  }).format(value);
-}
-
-export function getCartItemUnitTotal(item: CartItem): number {
-  const optionsDelta = item.selectedOptions.reduce((sum, opt) => sum + opt.priceDelta, 0);
-  return item.unitBasePrice + optionsDelta;
-}
 
 export function getPaymentPreferenceLabel(method: PaymentPreference): string {
   switch (method) {
@@ -308,11 +285,6 @@ export function buildCartWhatsAppUrl(
   deliveryInfo: Partial<DeliveryInfo>,
   items: CartItem[]
 ): string {
-  const subtotal = items.reduce(
-    (sum, item) => sum + getCartItemUnitTotal(item) * item.quantity,
-    0
-  );
-
   const timingLabel =
     deliveryInfo.deliveryTiming === 'scheduled' && deliveryInfo.scheduledDateTime
       ? `Programado: ${deliveryInfo.scheduledDateTime}`
@@ -338,7 +310,6 @@ export function buildCartWhatsAppUrl(
     '',
     '*Productos elegidos:*',
     ...items.map((item) => {
-      const unitTotal = getCartItemUnitTotal(item);
       const optsText =
         item.selectedOptions.length > 0
           ? `\n   Opciones: ${item.selectedOptions
@@ -348,13 +319,8 @@ export function buildCartWhatsAppUrl(
       const notesText = item.notes.trim()
         ? `\n   Nota: _${item.notes.trim()}_`
         : '';
-      return `• *${item.quantity}x ${item.name}* — ${formatCOP(
-        unitTotal * item.quantity
-      )}${optsText}${notesText}`;
+      return `• *${item.quantity}x ${item.name}*${optsText}${notesText}`;
     }),
-    '',
-    `*Subtotal productos: ${formatCOP(subtotal)}*`,
-    'Domicilio: Por confirmar según zona',
   ].filter(Boolean);
 
   return `${WHATSAPP_CONFIG.baseUrl}?text=${encodeURIComponent(lines.join('\n'))}`;

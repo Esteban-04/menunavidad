@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Check, MessageCircle, Minus, Plus, X } from 'lucide-react';
-import { buildSingleDishWhatsAppUrl, formatCOP } from '../data/menuData';
+import { buildSingleDishWhatsAppUrl } from '../data/menuData';
 import { CartItem, MenuItem, SelectedOption } from '../types/menu';
 
 interface DishModalProps {
@@ -62,7 +62,6 @@ export function DishModal({
           groupTitle: group.title,
           choiceId: choice.id,
           choiceLabel: choice.label,
-          priceDelta: choice.priceDelta ?? 0,
         });
       }
     } else {
@@ -74,16 +73,11 @@ export function DishModal({
             groupTitle: group.title,
             choiceId: choice.id,
             choiceLabel: choice.label,
-            priceDelta: choice.priceDelta ?? 0,
           });
         }
       });
     }
   });
-
-  const unitPrice =
-    dish.basePrice + selectedOptions.reduce((sum, opt) => sum + opt.priceDelta, 0);
-  const totalLinePrice = unitPrice * quantity;
 
   const toggleMultiChoice = (groupId: string, choiceId: string) => {
     setMultiSelections((prev) => {
@@ -103,7 +97,6 @@ export function DishModal({
     menuItemId: dish.id,
     name: dish.name,
     image: dish.image,
-    unitBasePrice: dish.basePrice,
     selectedOptions,
     quantity,
     notes: notes.trim(),
@@ -132,18 +125,36 @@ export function DishModal({
         className="w-full sm:max-w-xl bg-[#FAF8F5] rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative h-52 sm:h-60 bg-[#EFEAE2] shrink-0">
-          <img
-            src={dish.image}
-            alt={dish.imageAlt}
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover"
-          />
+        <div className="relative h-52 sm:h-64 bg-[#EFEAE2] shrink-0 overflow-hidden">
+          {dish.imageFit === 'contain' ? (
+            <>
+              <img
+                src={dish.image}
+                alt=""
+                aria-hidden="true"
+                referrerPolicy="no-referrer"
+                className="absolute inset-0 w-full h-full object-cover scale-110 blur-md opacity-95"
+              />
+              <img
+                src={dish.image}
+                alt={dish.imageAlt}
+                referrerPolicy="no-referrer"
+                className="relative z-10 w-full h-full object-contain [mask-image:linear-gradient(to_bottom,transparent_0%,black_7%,black_93%,transparent_100%)]"
+              />
+            </>
+          ) : (
+            <img
+              src={dish.image}
+              alt={dish.imageAlt}
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover"
+            />
+          )}
           <button
             type="button"
             onClick={onClose}
             aria-label="Cerrar personalización"
-            className="absolute top-3 right-3 w-10 h-10 rounded-full bg-white/95 text-[#1E1916] flex items-center justify-center shadow-md hover:bg-white transition-colors cursor-pointer"
+            className="absolute z-20 top-3 right-3 w-10 h-10 rounded-full bg-white/95 text-[#1E1916] flex items-center justify-center shadow-md hover:bg-white transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -202,21 +213,14 @@ export function DishModal({
                       }`}
                     >
                       <span className="text-sm font-medium">{choice.label}</span>
-                      <span className="flex items-center gap-2 shrink-0">
-                        {choice.priceDelta ? (
-                          <span className="font-mono text-xs tabular-nums text-[#8E6A1E]">
-                            +{formatCOP(choice.priceDelta)}
-                          </span>
-                        ) : null}
-                        <span
-                          className={`w-5 h-5 rounded-full border flex items-center justify-center ${
-                            isSelected
-                              ? 'bg-[#173B2B] border-[#173B2B] text-white'
-                              : 'border-[#1E1916]/25'
-                          }`}
-                        >
-                          {isSelected && <Check className="w-3 h-3" aria-hidden="true" />}
-                        </span>
+                      <span
+                        className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
+                          isSelected
+                            ? 'bg-[#173B2B] border-[#173B2B] text-white'
+                            : 'border-[#1E1916]/25'
+                        }`}
+                      >
+                        {isSelected && <Check className="w-3 h-3" aria-hidden="true" />}
                       </span>
                     </button>
                   );
@@ -273,7 +277,6 @@ export function DishModal({
               className="flex-1 py-3 px-5 min-h-[44px] rounded-lg bg-[#A81C24] text-white text-sm font-medium hover:bg-[#8E151C] transition-colors cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap"
             >
               <span>Agregar al Pedido</span>
-              <span className="font-mono tabular-nums">· {formatCOP(totalLinePrice)}</span>
             </button>
           </div>
 

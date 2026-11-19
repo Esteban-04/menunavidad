@@ -8,12 +8,7 @@ import {
   Trash2,
   X,
 } from 'lucide-react';
-import {
-  WHATSAPP_CONFIG,
-  buildCartWhatsAppUrl,
-  formatCOP,
-  getCartItemUnitTotal,
-} from '../data/menuData';
+import { buildCartWhatsAppUrl } from '../data/menuData';
 import { CartItem, DeliveryInfo, PaymentPreference } from '../types/menu';
 
 interface OrderDrawerProps {
@@ -57,11 +52,7 @@ export function OrderDrawer({
 
   if (!isOpen) return null;
 
-  const subtotal = cart.reduce(
-    (sum, item) => sum + getCartItemUnitTotal(item) * item.quantity,
-    0
-  );
-
+  const totalItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const waUrl = buildCartWhatsAppUrl(deliveryInfo, cart);
 
   const handleSendWhatsApp = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -153,7 +144,7 @@ export function OrderDrawer({
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium uppercase tracking-wider text-[#746A63]">
-                    Productos seleccionados ({cart.reduce((s, i) => s + i.quantity, 0)})
+                    Productos seleccionados ({totalItemsCount})
                   </span>
                   <button
                     type="button"
@@ -164,79 +155,96 @@ export function OrderDrawer({
                   </button>
                 </div>
 
-                {cart.map((item) => {
-                  const unitTotal = getCartItemUnitTotal(item);
-                  return (
-                    <div
-                      key={item.cartItemId}
-                      className="bg-white border border-[#1E1916]/10 rounded-xl p-4 flex gap-3.5"
-                    >
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        referrerPolicy="no-referrer"
-                        className="w-20 h-20 rounded-lg object-cover bg-[#EFEAE2] shrink-0"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <h3 className="text-sm font-semibold text-[#1E1916] leading-snug">
-                            {item.name}
-                          </h3>
+                {cart.map((item) => (
+                  <div
+                    key={item.cartItemId}
+                    className="bg-white border border-[#1E1916]/10 rounded-xl p-4 flex gap-3.5"
+                  >
+                    <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-[#EFEAE2] shrink-0">
+                      {item.menuItemId === 'cheesecake-navideno' ? (
+                        <>
+                          <img
+                            src={item.image}
+                            alt=""
+                            aria-hidden="true"
+                            referrerPolicy="no-referrer"
+                            className="absolute inset-0 w-full h-full object-cover scale-110 blur-sm opacity-90"
+                          />
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            referrerPolicy="no-referrer"
+                            className="relative z-10 w-full h-full object-contain"
+                          />
+                        </>
+                      ) : (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="text-sm font-semibold text-[#1E1916] leading-snug">
+                          {item.name}
+                        </h3>
+                        <button
+                          type="button"
+                          onClick={() => onRemoveItem(item.cartItemId)}
+                          aria-label={`Eliminar ${item.name}`}
+                          className="p-1.5 text-[#746A63] hover:text-[#A81C24] cursor-pointer shrink-0"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {item.selectedOptions.length > 0 && (
+                        <p className="mt-1 text-xs text-[#574E49]">
+                          {item.selectedOptions
+                            .map((o) => o.choiceLabel)
+                            .join(' · ')}
+                        </p>
+                      )}
+
+                      {item.notes && (
+                        <p className="mt-1 text-xs italic text-[#746A63]">
+                          Nota: {item.notes}
+                        </p>
+                      )}
+
+                      <div className="mt-3 flex items-center justify-between gap-2">
+                        <div className="inline-flex items-center border border-[#1E1916]/15 rounded-lg bg-[#FAF8F5]">
                           <button
                             type="button"
-                            onClick={() => onRemoveItem(item.cartItemId)}
-                            aria-label={`Eliminar ${item.name}`}
-                            className="p-1.5 text-[#746A63] hover:text-[#A81C24] cursor-pointer shrink-0"
+                            onClick={() => onUpdateQuantity(item.cartItemId, -1)}
+                            aria-label="Restar unidad"
+                            className="w-8 h-8 flex items-center justify-center text-[#1E1916] hover:bg-[#EFEAE2] rounded-l-lg cursor-pointer"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                          <span className="w-8 text-center font-mono text-xs font-semibold tabular-nums">
+                            {item.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => onUpdateQuantity(item.cartItemId, 1)}
+                            aria-label="Sumar unidad"
+                            className="w-8 h-8 flex items-center justify-center text-[#1E1916] hover:bg-[#EFEAE2] rounded-r-lg cursor-pointer"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
                           </button>
                         </div>
 
-                        {item.selectedOptions.length > 0 && (
-                          <p className="mt-1 text-xs text-[#574E49]">
-                            {item.selectedOptions
-                              .map((o) => o.choiceLabel)
-                              .join(' · ')}
-                          </p>
-                        )}
-
-                        {item.notes && (
-                          <p className="mt-1 text-xs italic text-[#746A63]">
-                            Nota: {item.notes}
-                          </p>
-                        )}
-
-                        <div className="mt-3 flex items-center justify-between gap-2">
-                          <div className="inline-flex items-center border border-[#1E1916]/15 rounded-lg bg-[#FAF8F5]">
-                            <button
-                              type="button"
-                              onClick={() => onUpdateQuantity(item.cartItemId, -1)}
-                              aria-label="Restar unidad"
-                              className="w-8 h-8 flex items-center justify-center text-[#1E1916] hover:bg-[#EFEAE2] rounded-l-lg cursor-pointer"
-                            >
-                              <Minus className="w-3.5 h-3.5" />
-                            </button>
-                            <span className="w-8 text-center font-mono text-xs font-semibold tabular-nums">
-                              {item.quantity}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => onUpdateQuantity(item.cartItemId, 1)}
-                              aria-label="Sumar unidad"
-                              className="w-8 h-8 flex items-center justify-center text-[#1E1916] hover:bg-[#EFEAE2] rounded-r-lg cursor-pointer"
-                            >
-                              <Plus className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-
-                          <span className="font-mono text-sm font-semibold text-[#1E1916] tabular-nums">
-                            {formatCOP(unitTotal * item.quantity)}
-                          </span>
-                        </div>
+                        <span className="text-xs text-[#746A63] font-mono tabular-nums">
+                          {item.quantity} {item.quantity === 1 ? 'unidad' : 'unidades'}
+                        </span>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
 
               {/* Delivery Form */}
@@ -441,16 +449,10 @@ export function OrderDrawer({
 
         {/* Drawer Footer */}
         {cart.length > 0 && (
-          <div className="p-5 bg-white border-t border-[#1E1916]/10 space-y-3 shrink-0">
-            <div className="space-y-1 text-sm">
-              <div className="flex justify-between text-base font-semibold text-[#1E1916]">
-                <span>Subtotal productos</span>
-                <span className="font-mono tabular-nums">{formatCOP(subtotal)}</span>
-              </div>
-              <p className="text-xs text-[#746A63]">
-                El valor del domicilio se confirma por WhatsApp según tu dirección
-              </p>
-            </div>
+          <div className="p-5 bg-white border-t border-[#1E1916]/10 space-y-2.5 shrink-0">
+            <p className="text-xs text-[#574E49]">
+              Confirmaremos el valor total y el envío directamente por WhatsApp.
+            </p>
 
             <a
               href={waUrl}
@@ -460,9 +462,7 @@ export function OrderDrawer({
               className="w-full py-3.5 px-5 min-h-[46px] rounded-lg bg-[#173B2B] text-white text-sm font-medium hover:bg-[#112D20] transition-colors flex items-center justify-center gap-2"
             >
               <MessageCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
-              <span>
-                Enviar Pedido por WhatsApp
-              </span>
+              <span>Enviar Pedido por WhatsApp</span>
             </a>
           </div>
         )}

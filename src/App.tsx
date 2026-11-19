@@ -8,7 +8,6 @@ import { HeroSection } from './components/HeroSection';
 import { MenuCatalog } from './components/MenuCatalog';
 import { OrderDrawer } from './components/OrderDrawer';
 import { WhatsAppLauncher } from './components/WhatsAppLauncher';
-import { getCartItemUnitTotal } from './data/menuData';
 import { CartItem, DeliveryInfo, MenuItem } from './types/menu';
 
 const CART_STORAGE_KEY = 'menu_navideno_2026_cart';
@@ -84,10 +83,6 @@ export default function App() {
   }, [toastMessage]);
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const cartSubtotal = cart.reduce(
-    (sum, item) => sum + getCartItemUnitTotal(item) * item.quantity,
-    0
-  );
 
   const handleAddToCart = (newItem: CartItem) => {
     setCart((prev) => {
@@ -131,7 +126,6 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#1E1916]">
       <Header
         cartCount={cartCount}
-        cartSubtotal={cartSubtotal}
         onOpenOrderDrawer={() => setIsDrawerOpen(true)}
       />
 
